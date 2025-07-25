@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trupti Salve | Frontend Developer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 to-white min-h-screen text-gray-800">
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-6 py-4 shadow-md bg-white">
+    <h1 class="text-2xl font-bold text-indigo-700">Trupti Salve</h1>
+    <ul class="flex space-x-6">
+      <li><a href="index.html" class="hover:text-indigo-600">Home</a></li>
+      <li><a href="about.html" class="hover:text-indigo-600">About</a></li>
+      <li><a href="projects.html" class="hover:text-indigo-600">Projects</a></li>
+      <li><a href="skills.html" class="hover:text-indigo-600">Skills</a></li>
+      <li><a href="contact.html" class="hover:text-indigo-600">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="flex flex-col items-center justify-center text-center py-20 px-4">
+    <h2 class="text-4xl sm:text-5xl font-extrabold text-indigo-800 mb-4">Hi, I'm Trupti Salve</h2>
+    <p class="text-lg sm:text-xl text-gray-600">A Frontend Developer passionate about building beautiful user interfaces</p>
+  </section>
+
+  <!-- Voice Command Section -->
+  <section class="text-center mt-12">
+    <button id="startBtn" class="px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition">
+      🎤 Start Voice Control
+    </button>
+    <p id="status" class="mt-4 text-gray-600">Say commands like "Go to projects", "Open contact page"</p>
+  </section>
+
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const status = document.getElementById('status');
+
+    const commands = {
+      "go to home": "index.html",
+      "open about": "about.html",
+      "go to projects": "projects.html",
+      "show my skills": "skills.html",
+      "contact me": "contact.html"
+    };
+
+    let recognition;
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+    } else if ('SpeechRecognition' in window) {
+      recognition = new SpeechRecognition();
+    }
+
+    if (recognition) {
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        status.textContent = `You said: "${transcript}"`;
+        Object.entries(commands).forEach(([cmd, link]) => {
+          if (transcript.includes(cmd)) {
+            window.location.href = link;
+          }
+        });
+      };
+
+      recognition.onerror = (event) => {
+        status.textContent = `Error: ${event.error}`;
+      };
+    }
+
+    startBtn.addEventListener('click', () => {
+      if (recognition) {
+        recognition.start();
+        status.textContent = 'Listening...';
+      } else {
+        status.textContent = 'Speech Recognition not supported on this browser.';
+      }
+    });
+  </script>
+</body>
+</html>
